@@ -5,15 +5,15 @@ import { message } from '@tauri-apps/plugin-dialog'
 import { openUrl } from '@tauri-apps/plugin-opener'
 import { platform } from '@tauri-apps/plugin-os'
 import {
+    ArrowRightLeftIcon,
+    CalendarIcon,
     CodeIcon,
-    CogIcon,
     EyeIcon,
     GlobeIcon,
-    InfoIcon,
-    KeyboardIcon,
-
-    SatelliteDishIcon,
+    HardDriveIcon,
+    LayoutTemplateIcon,
     ServerIcon,
+    SettingsIcon,
 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
@@ -21,14 +21,15 @@ import { LOCAL_HOST_ID } from '../../../lib/hosts'
 import rclone from '../../../lib/rclone/client'
 import { useStore } from '../../../store/memory'
 import { usePersistedStore } from '../../../store/persisted'
-import AboutSection from './AboutSection'
 import ConfigSection from './ConfigSection'
-import GeneralSection from './GeneralSection'
 import HostsSection from './HostsSection'
 
-import ProxySection from './ProxySection'
+import MountsSection from './MountsSection'
+import PreferencesSection from './PreferencesSection'
 import RemotesSection from './RemotesSection'
-import ToolbarSection from './ToolbarSection'
+import Schedules from '../Schedules'
+import Templates from '../Templates'
+import Transfers from '../Transfers'
 
 export default function Settings() {
     const [searchParams] = useSearchParams()
@@ -37,7 +38,7 @@ export default function Settings() {
     const isRestartingRclone = useStore((state) => state.isRestartingRclone)
     const isLocalHost = useMemo(() => currentHost?.id === LOCAL_HOST_ID, [currentHost?.id])
 
-    const defaultSelectedTab = useMemo(() => searchParams.get('tab') || 'general', [searchParams])
+    const defaultSelectedTab = useMemo(() => searchParams.get('tab') || 'remotes', [searchParams])
 
     const [passwordCheckInput, setPasswordCheckInput] = useState('')
     const [passwordCheckPassed, setPasswordCheckPassed] = useState(false)
@@ -149,32 +150,6 @@ export default function Settings() {
                 radius="sm"
             >
                 <Tab
-                    key="general"
-                    title={
-                        <div className="flex items-center gap-2">
-                            <CogIcon className="w-5 h-5" />
-                            <span>General</span>
-                        </div>
-                    }
-                    data-focus-visible="false"
-                    className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
-                >
-                    <GeneralSection />
-                </Tab>
-                <Tab
-                    key="toolbar"
-                    title={
-                        <div className="flex items-center gap-2">
-                            <KeyboardIcon className="w-5 h-5" />
-                            <span>Toolbar</span>
-                        </div>
-                    }
-                    data-focus-visible="false"
-                    className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
-                >
-                    <ToolbarSection />
-                </Tab>
-                <Tab
                     key="remotes"
                     title={
                         <div className="flex items-center gap-2">
@@ -186,6 +161,19 @@ export default function Settings() {
                     className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
                 >
                     <RemotesSection />
+                </Tab>
+                <Tab
+                    key="mounts"
+                    title={
+                        <div className="flex items-center gap-2">
+                            <HardDriveIcon className="w-5 h-5" />
+                            <span>Mounts</span>
+                        </div>
+                    }
+                    data-focus-visible="false"
+                    className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
+                >
+                    <MountsSection />
                 </Tab>
                 <Tab
                     key="hosts"
@@ -229,45 +217,56 @@ export default function Settings() {
                     <ConfigSection />
                 </Tab>
                 <Tab
-                    key="proxy"
+                    key="transfers"
                     title={
-                        // <Tooltip
-                        //     content={
-                        //         currentHost?.id !== 'local'
-                        //             ? 'Proxy settings are only available when using your local machine, not a remote host'
-                        //             : undefined
-                        //     }
-                        //     isDisabled={currentHost?.id === 'local'}
-                        //     placement="right"
-                        //     size="lg"
-                        //     color="foreground"
-                        //     className="max-w-48"
-                        //     offset={97}
-                        // >
                         <div className="flex items-center gap-2">
-                            <SatelliteDishIcon className="w-5 h-5" />
-                            <span>Proxy</span>
+                            <ArrowRightLeftIcon className="w-5 h-5" />
+                            <span>Transfers</span>
                         </div>
-                        // </Tooltip>
                     }
                     data-focus-visible="false"
                     className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
                 >
-                    <ProxySection />
+                    <Transfers />
                 </Tab>
-
                 <Tab
-                    key="about"
+                    key="schedules"
                     title={
                         <div className="flex items-center gap-2">
-                            <InfoIcon className="w-5 h-5" />
-                            <span>About</span>
+                            <CalendarIcon className="w-5 h-5" />
+                            <span>Schedules</span>
                         </div>
                     }
                     data-focus-visible="false"
                     className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
                 >
-                    <AboutSection />
+                    <Schedules />
+                </Tab>
+                <Tab
+                    key="templates"
+                    title={
+                        <div className="flex items-center gap-2">
+                            <LayoutTemplateIcon className="w-5 h-5" />
+                            <span>Templates</span>
+                        </div>
+                    }
+                    data-focus-visible="false"
+                    className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
+                >
+                    <Templates />
+                </Tab>
+                <Tab
+                    key="preferences"
+                    title={
+                        <div className="flex items-center gap-2">
+                            <SettingsIcon className="w-5 h-5" />
+                            <span>Preferences</span>
+                        </div>
+                    }
+                    data-focus-visible="false"
+                    className="w-full max-h-screen p-0 overflow-scroll overscroll-none"
+                >
+                    <PreferencesSection />
                 </Tab>
             </Tabs>
             {!isLocalHost && (
