@@ -18,7 +18,7 @@
                 "height": 0,
                 "center": true,
                 "hiddenTitle": false,
-                "resizable": false,
+                "resizable": true,
                 "fullscreen": false,
                 "visible": false,
                 "decorations": false,

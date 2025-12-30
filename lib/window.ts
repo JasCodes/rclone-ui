@@ -19,14 +19,18 @@ export async function openWindow({
     url,
     width = 840,
     height = platform() === 'windows' ? 755 : 725,
+    title,
+    resizable,
 }: {
     name: string
     url: string
     width?: number
     height?: number
+    title?: string
+    resizable?: boolean
 }) {
     console.log('[openWindow] ', name, url)
-    await invoke('open_window', { name, url, width, height })
+    await invoke('open_window', { name, url, width, height, title, resizable })
     return WebviewWindow.getByLabel(name)
 }
 

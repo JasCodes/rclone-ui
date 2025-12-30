@@ -93,6 +93,8 @@ pub async fn open_window(
     url: String,
     width: Option<f64>,
     height: Option<f64>,
+    title: Option<String>,
+    resizable: Option<bool>,
 ) -> Result<(), String> {
     if let Some(existing) = app_handle.get_webview_window(&name) {
         existing.set_focus().map_err(|e| e.to_string())?;
@@ -104,11 +106,13 @@ pub async fn open_window(
     let default_height = if os == "windows" { 755.0 } else { 725.0 };
     let width = width.unwrap_or(840.0);
     let height = height.unwrap_or(default_height);
+    let title = title.unwrap_or(name.clone());
+    let resizable = resizable.unwrap_or(false);
 
     let mut builder = WebviewWindowBuilder::new(&app_handle, &name, WebviewUrl::App(url.into()))
-        .title(&name)
+        .title(&title)
         .inner_size(width, height)
-        .resizable(false)
+        .resizable(resizable)
         .visible(false)
         .focused(false)
         .decorations(true)
@@ -155,7 +159,9 @@ pub async fn open_window(
 
     if os != "windows" && os != "macos" {
 		window.set_resizable(true).map_err(|e| e.to_string())?;
-        window.set_resizable(false).map_err(|e| e.to_string())?;
+        if !resizable {
+            window.set_resizable(false).map_err(|e| e.to_string())?;
+        }
     }
 
     Ok(())
