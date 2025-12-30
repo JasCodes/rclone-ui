@@ -21,7 +21,10 @@ async function buildMenu() {
         id: 'open',
         text: 'Open',
         action: async () => {
-            await invoke('show_toolbar')
+            await openWindow({
+                name: 'Settings',
+                url: '/settings',
+            })
         },
     })
     menuItems.push(openMenuItem)
@@ -156,11 +159,17 @@ export async function initTray() {
             menu: await buildMenu(),
             icon: await resolveTrayIconForTheme(),
             tooltip: 'Rclone',
-            menuOnLeftClick: true,
+            menuOnLeftClick: false,
             iconAsTemplate: true,
             action: async (event: TrayIconEvent) => {
                 if (event.type === 'Click') {
                     console.log('[onTrayAction] tray clicked:', event)
+                    await openWindow({
+                        name: 'Settings',
+                        url: '/settings',
+                        title: '',
+                        resizable: true,
+                    })
                 }
             },
         })
